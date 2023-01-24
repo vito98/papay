@@ -3,10 +3,6 @@ const express = require("express");
 const app = express();
 const router = require("./router");
 
-// MongoDB require
-const db = require("./server").db();
-const mongodb = require("mongodb");
-
 // 1 Kirish code
 app.use(express.static("public"));
 app.use(express.json());
@@ -19,6 +15,7 @@ app.set("views", "views");
 app.set("view engine", "ejs");
 
 // 4 Routing
+// app.use("/resto", router_bssr);
 app.use("/", router);
 
 module.exports = app;
