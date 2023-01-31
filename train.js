@@ -1,7 +1,8 @@
 console.log("train js");
 
-function FootballPoints(wins, draws, losses) {
-  return `${3 * wins + 1 * draws + 0 * losses}`;
+function calculate(nums) {
+  let result = eval(nums);
+  return Math.floor(result);
 }
 
-console.log(FootballPoints(3, 4, 2));
+console.log(calculate("11/10"));
