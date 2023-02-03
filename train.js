@@ -1,8 +1,33 @@
 console.log("train js");
 
-function calculate(nums) {
-  let result = eval(nums);
-  return Math.floor(result);
+class Member {
+  constructor(counts) {
+    this.counts = counts;
+  }
+
+  addMember(amount) {
+    this.counts += amount;
+  }
+
+  removeMember(amount) {
+    this.counts -= amount;
+  }
+
+  inform() {
+    console.log(this.counts);
+  }
 }
 
-console.log(calculate("11/10"));
+const new_member = new Member(0);
+
+new_member.addMember(5);
+new_member.removeMember(2);
+
+new_member.inform();
+
+// function calculate(nums) {
+//   let result = eval(nums);
+//   return Math.floor(result);
+// }
+
+// console.log(calculate("11/10"));
