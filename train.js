@@ -23,7 +23,6 @@ const new_member = new Member(0);
 
 new_member.addMember(7);
 new_member.removeMember(3);
-new_member.addMember(6);
 
 new_member.inform();
 

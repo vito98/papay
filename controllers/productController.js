@@ -16,7 +16,6 @@ productController.getAllProducts = async (req, res) => {
 productController.addNewProduct = async (req, res) => {
   try {
     console.log("POST: cont/addNewProduct");
-    console.log("req_files", req.files);
     assert(req.files, Definer.general_err3);
 
     const product = new Product();
@@ -25,17 +24,15 @@ productController.addNewProduct = async (req, res) => {
     data.product_images = req.files.map((ele) => {
       return ele.path;
     });
-    console.log("req_data", data);
 
-    // const result = await product.addNewProductData(data, req.member);
+    const result = await product.addNewProductData(data, req.member);
 
-    // const html = `<script>
-    //                 alert(new dish added successfully);
-    //                 window.location.replace('/resto/products/menu');
-    //               </script>`;
+    const html = `<script>
+                    alert(new dish added successfully);
+                    window.location.replace('/resto/products/menu');
+                  </script>`;
 
-    // res.end(html);
-    res.send("ok");
+    res.end(html);
   } catch (err) {
     console.log(`ERROR, cont/addNewProduct, ${err.message}`);
   }
@@ -45,6 +42,7 @@ productController.updateChosenProduct = async (req, res) => {
   try {
     console.log("POST: cont/updateChosenProduct");
     const product = new Product();
+    console.log("req.params", req.params);
     const id = req.params.id;
     const result = await product.updateChosenProduct(
       id,
