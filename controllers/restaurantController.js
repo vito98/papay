@@ -1,3 +1,5 @@
+const assert = require("assert");
+const Definer = require("../lib/mistake");
 const Member = require("../models/Member");
 const Product = require("../models/Product");
 
@@ -40,11 +42,18 @@ restaurantController.getSignupMyRestaurant = async (req, res) => {
 restaurantController.signupProcess = async (req, res) => {
   try {
     console.log("POST: cont/signupProcess");
-    const data = req.body,
-      member = new Member(),
-      new_member = await member.signupData(data);
 
-    req.session.member = new_member;
+    assert(req.file, Definer.general_err3);
+
+    let new_member = req.body;
+    new_member.mb_type = "RESTAURANT";
+    new_member.mb_image = req.file.path;
+
+    const member = new Member();
+    const result = await member.signupData(new_member);
+    assert(result, Definer.general_err1);
+
+    req.session.member = result;
     res.redirect("/resto/products/menu");
   } catch (err) {
     console.log(`ERROR, cont/signupProcess, ${err.message}`);
@@ -82,8 +91,15 @@ restaurantController.loginProcess = async (req, res) => {
 };
 
 restaurantController.logout = (req, res) => {
-  console.log("GET cont.logout");
-  res.end("logout sahifasidasiz");
+  try {
+    console.log("GET cont/logout");
+    req.session.destroy(function () {
+      res.redirect("/resto");
+    });
+  } catch (err) {
+    console.log(`ERROR, cont/logout, ${err.message}`);
+    res.json({ state: "fail", message: err.message });
+  }
 };
 
 restaurantController.validateAuthRestaurant = (req, res, next) => {
