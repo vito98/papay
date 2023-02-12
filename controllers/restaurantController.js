@@ -43,11 +43,14 @@ restaurantController.signupProcess = async (req, res) => {
   try {
     console.log("POST: cont/signupProcess");
 
+    console.log("req.file", req.file);
+
     assert(req.file, Definer.general_err3);
 
     let new_member = req.body;
     new_member.mb_type = "RESTAURANT";
     new_member.mb_image = req.file.path;
+    console.log("new_member", new_member);
 
     const member = new Member();
     const result = await member.signupData(new_member);
