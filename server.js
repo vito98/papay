@@ -21,7 +21,7 @@ mongoose.connect(
       let PORT = process.env.PORT || 3003;
       server.listen(PORT, function () {
         console.log(
-          `The server is running sucessfully on port: ${PORT}, http://localhost:${PORT}`
+          `The server is running successfully on port: ${PORT}, http://localhost:${PORT}`
         );
       });
     }

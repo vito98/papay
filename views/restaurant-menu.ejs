@@ -182,9 +182,11 @@
         $(".hiding_btn").css("display","none");
       })
 
+      // product status changer
       $(".new_product_status").on("change", async function(e) {
         const id = e.target.id;
         const product_status = $(`#${id}.new_product_status`).val();
+        // console.log("product_status",product_status);
 
         try {
           const response = await axios.post(
@@ -192,7 +194,7 @@
             {id: id, product_status: product_status}
           );
           const result = response.data;
-          console.log("result",result);
+          // console.log("result",result);
 
           if(result.state == 'success') {
             alert('success');
@@ -211,10 +213,10 @@
         const restaurant_mb_id = $(".restaurant_mb_id").val(),
           product_name = $(".product_name").val(),
           product_price = $(".product_price").val(),
-          product_left_cnt = $(".product_price").val(),
-          product_collection = $(".product_price").val(),
-          product_description = $(".product_price").val(),
-          product_status = $(".product_price").val();
+          product_left_cnt = $(".product_left_cnt").val(),
+          product_collection = $(".product_collection").val(),
+          product_description = $(".product_description").val(),
+          product_status = $(".product_status").val();
 
   if (
     restaurant_mb_id == "" ||
@@ -232,8 +234,8 @@
 
 
 function previewFileHandler(input, order) {
-  console.log(input);
   const image_class_name = input.className;
+  // console.log("image_class_name", image_class_name);
   const file = $(`.${image_class_name}`).get(0).files[0],
     fileType = file['type'],
     validImageTypes = ['image/jpg', 'image/jpeg', 'image/png'];

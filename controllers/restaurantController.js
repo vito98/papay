@@ -2,6 +2,7 @@ const assert = require("assert");
 const Definer = require("../lib/mistake");
 const Member = require("../models/Member");
 const Product = require("../models/Product");
+const Restaurant = require("../models/Restaurant");
 
 let restaurantController = module.exports;
 
@@ -108,6 +109,7 @@ restaurantController.logout = (req, res) => {
 restaurantController.validateAuthRestaurant = (req, res, next) => {
   if (req.session?.member?.mb_type === "RESTAURANT") {
     req.member = req.session.member;
+    console.log("req.member:::::", req.member);
     next();
   } else {
     res.json({
@@ -122,5 +124,48 @@ restaurantController.checkSessions = (req, res) => {
     res.json({ state: "succeed", data: req.session.member });
   } else {
     res.json({ state: "fail", message: "You are not authentificated" });
+  }
+};
+
+restaurantController.validateAdmin = (req, res, next) => {
+  if (req.session?.member?.mb_type === "ADMIN") {
+    req.member = req.session.member;
+    next();
+  } else {
+    const html = `<script>
+                    alert('Admin page: Permission denied!');
+                    window.location.replace('/resto');
+                  </script>`;
+
+    res.end(html);
+  }
+};
+
+restaurantController.getAllRestaurants = async (req, res) => {
+  try {
+    console.log("GET cont/getAllRestaurants");
+
+    const restaurant = new Restaurant();
+    const restaurants_data = await restaurant.getAllRestaurantsData();
+    // console.log("restaurants_data", restaurants_data);
+
+    res.render("all-restaurants", { restaurants_data: restaurants_data });
+  } catch (err) {
+    console.log(`ERROR, cont/getAllRestaurants, ${err.message}`);
+    res.json({ state: "fail", message: err.message });
+  }
+};
+
+restaurantController.updateRestaurantByAdmin = async (req, res) => {
+  try {
+    console.log("POST cont/updateRestaurantByAdmin");
+
+    const restaurant = new Restaurant();
+    const result = await restaurant.updateRestaurantByAdminData(req.body);
+
+    await res.json({ state: "success", data: result });
+  } catch (err) {
+    console.log(`ERROR, cont/updateRestaurantByAdmin, ${err.message}`);
+    res.json({ state: "fail", message: err.message });
   }
 };
