@@ -1,9 +1,9 @@
 const Member = require("../models/Member");
 const assert = require("assert");
 const Definer = require("../lib/mistake");
+const jwt = require("jsonwebtoken");
 
 let memberController = module.exports;
-const jwt = require("jsonwebtoken");
 
 memberController.signup = async (req, res) => {
   try {
@@ -33,9 +33,11 @@ memberController.login = async (req, res) => {
       result = await member.loginData(data);
 
     const token = memberController.createToken(result);
+    // console.log("token:::", token);
+
     res.cookie("access_token", token, {
       maxAge: 6 * 3600 * 1000,
-      httpOnly: true,
+      httpOnly: false,
     });
 
     res.json({ state: "succeed", data: result });
@@ -47,7 +49,8 @@ memberController.login = async (req, res) => {
 
 memberController.logout = (req, res) => {
   console.log("GET cont/logout");
-  res.end("logout sahifasidasiz");
+  res.cookie("access_token", null, { maxAge: 0, httpOnly: true });
+  res.json({ state: "succeed", data: "logout successfully!" });
 };
 
 memberController.createToken = (result) => {
@@ -71,15 +74,40 @@ memberController.createToken = (result) => {
 
 memberController.checkMyAuthentication = (req, res) => {
   try {
-    console.log("POST: cont/checkMyAuthentication");
+    console.log("GET: cont/checkMyAuthentication");
     let token = req.cookies["access_token"];
-    console.log("token::", token);
 
     const member = token ? jwt.verify(token, process.env.SECRET_TOKEN) : null;
-    assert.ok(token, Definer.auth_err2);
+    assert.ok(member, Definer.auth_err2);
 
     res.json({ state: "succeed", data: member });
   } catch (err) {
     throw err;
+  }
+};
+
+memberController.getChosenMember = async (req, res) => {
+  try {
+    console.log("Get: cont/getChosenMember");
+    const id = req.params.id;
+
+    const member = new Member();
+    const result = await member.getChosenMemberData(req.member, id);
+
+    res.json({ state: "succeed", data: result });
+  } catch (err) {
+    console.log(`ERROR, cont/getChosenMember, ${err.message}`);
+    res.json({ state: "fail", message: err.message });
+  }
+};
+
+memberController.retrieveAuthMember = async (req, res, next) => {
+  try {
+    const token = req.cookies["access_token"];
+    req.member = token ? jwt.verify(token, process.env.SECRET_TOKEN) : null;
+    next();
+  } catch (err) {
+    console.log(`ERROR, cont/retrieveAuthMember, ${err.message}`);
+    next();
   }
 };
